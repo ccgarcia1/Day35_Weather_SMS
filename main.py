@@ -1,8 +1,13 @@
 import requests
 from datetime import datetime
 import pytz
+from twilio.rest import Client
+from keys import Keys
 
-api_key = "Your API KEY"
+new_key = Keys()
+
+
+api_key = new_key.open_weather_appid
 forecast_end_point = "https://api.openweathermap.org/data/2.5/forecast"
 lat_long_end_point = "http://api.openweathermap.org/geo/1.0/direct"
 
@@ -46,3 +51,14 @@ for index, element in enumerate(data_list):
       if weather_code < 700:
           print(f"dt {brazil_datetime} weather_code {weather_code}")
 
+
+
+
+client = Client(new_key.twilio_account_sid, new_key.twilio_auth_token)
+message = client.messages.create(
+    body='Hello World - Twilio with Python',
+    from_=new_key.twilio_from,
+    to=new_key.twilio_to
+)
+
+print(message.sid)
