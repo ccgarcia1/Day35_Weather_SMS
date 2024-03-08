@@ -4,6 +4,7 @@ import pytz
 from twilio.rest import Client
 from keys import Keys
 
+
 new_key = Keys()
 
 
@@ -37,7 +38,7 @@ data = response.json()
 brazil_timezone = pytz.timezone('America/Sao_Paulo')
 
 
-
+will_rain = False
 data_list = data["list"]
 for index, element in enumerate(data_list):
   dt = element["dt"]
@@ -49,16 +50,16 @@ for index, element in enumerate(data_list):
       # Convert the timestamp to Brazil time directly
       brazil_datetime = datetime.fromtimestamp(dt, tz=pytz.utc).astimezone(brazil_timezone)
       if weather_code < 700:
-          print(f"dt {brazil_datetime} weather_code {weather_code}")
+          will_rain = True
+          #print(f"dt {brazil_datetime} weather_code {weather_code}")
 
+if will_rain:
+    # sending SMS via Twilio
+    client = Client(new_key.twilio_account_sid, new_key.twilio_auth_token)
+    message = client.messages.create(
+        body="It's going to rain today, remember to bring an Umbrella",
+        from_=new_key.twilio_from,
+        to=new_key.twilio_to
+    )
 
-
-
-client = Client(new_key.twilio_account_sid, new_key.twilio_auth_token)
-message = client.messages.create(
-    body='Hello World - Twilio with Python',
-    from_=new_key.twilio_from,
-    to=new_key.twilio_to
-)
-
-print(message.sid)
+    print(message.status)
